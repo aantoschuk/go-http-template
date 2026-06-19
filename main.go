@@ -7,6 +7,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/aantoschuk/go-template/internal/middleware/logger"
 	"github.com/aantoschuk/go-template/internal/server"
 )
 
@@ -17,6 +18,8 @@ func main() {
 		syscall.SIGTERM,
 	)
 	defer stop()
+
+	_, _ = logger.CreateLogger("dev", "api")
 
 	serverParams := server.ServerParams{
 		Addr:                "127.0.0.1:8000",
