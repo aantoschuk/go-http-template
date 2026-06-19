@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/aantoschuk/go-template/internal/middleware/logger"
+	"github.com/aantoschuk/go-template/internal/router"
 	"github.com/aantoschuk/go-template/internal/server"
 )
 
@@ -19,12 +20,17 @@ func main() {
 	)
 	defer stop()
 
-	_, _ = logger.CreateLogger("dev", "api")
+	logger, logFormat := logger.CreateLogger("dev", "api")
+
+	r := router.CreateNewRouter(router.CreateNewRouterParams{
+		Logger:    logger,
+		LogFormat: logFormat,
+	})
 
 	serverParams := server.ServerParams{
 		Addr:                "127.0.0.1:8000",
 		Name:                "api",
-		Handler:             nil,
+		Handler:             r,
 		ShutdownSignalCtx:   ctx,
 		ShutdownGracePeriod: 5 * time.Second,
 	}
