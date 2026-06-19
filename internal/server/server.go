@@ -25,8 +25,12 @@ type ServerParams struct {
 // StartServer function runs the http.server with the specified params
 func StartServer(params ServerParams) error {
 	srv := &http.Server{
-		Addr:    params.Addr,
-		Handler: params.Handler,
+		Addr:              params.Addr,
+		ReadHeaderTimeout: time.Second,
+		Handler:           params.Handler,
+		ReadTimeout:       6 * time.Second,
+		// this is default value, 1MB.
+		MaxHeaderBytes: 1 << 20,
 	}
 
 	errCh := make(chan error, 1)

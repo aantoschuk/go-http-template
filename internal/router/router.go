@@ -1,8 +1,10 @@
 package router
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
+	"time"
 
 	loggerMiddleware "github.com/aantoschuk/go-template/internal/middleware/logger"
 	"github.com/go-chi/chi/v5"
@@ -27,7 +29,17 @@ func CreateNewRouter(params CreateNewRouterParams) http.Handler {
 	r.Use(middleware.RequestID)
 	r.Use(loggerMiddleware.Logger(params.Logger, params.LogFormat))
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World"))
+		ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+		defer cancel()
+		select {
+		// timeout is only for cancelation purposes
+		case <-time.After(10 * time.Second):
+			w.Write([]byte("Hello World"))
+		case <-ctx.Done():
+			slog.Warn("request timed out")
+			w.WriteHeader(504)
+			return
+		}
 	})
 
 	return r
