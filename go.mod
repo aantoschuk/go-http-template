@@ -9,4 +9,7 @@ require (
 	github.com/golang-cz/devslog v0.0.16
 )
 
-require github.com/google/uuid v1.6.0 // indirect
+require (
+	github.com/go-chi/cors v1.2.2 // indirect
+	github.com/google/uuid v1.6.0 // indirect
+)
